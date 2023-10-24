@@ -15,11 +15,18 @@ import java.util.stream.Collectors;
  */
 public class Role extends VersionInfo {
 
+    // Assignable
     public final static String IMS_OWNER = "ims-owner";
     public final static String IMS_MANAGER = "ims-manager";
     public final static String IMS_DEVELOPER = "ims-developer";
     public final static String STRATEGY_COORDINATOR = "strategy-coordinator";
     public final static String OPERATIONS_COORDINATOR = "operations-coordinator";
+
+    // Abstract
+    public final static String PROCESS_OWNER = "process-owner";
+    public final static String PROCESS_MANAGER = "process-manager";
+    public final static String REPORT_OWNER = "report-owner";
+    public final static String SERVICE_OWNER = "service-owner";
 
     // Pseudo-roles that can be used in API endpoint annotations to define access,
     // but are not considered/returned by the API endpoints nor stored in Check-in
@@ -54,25 +61,14 @@ public class Role extends VersionInfo {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public String name; // Human-readable version of the role field
 
+    public boolean assignable;
+
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public String tasks; // Markdown
 
     @Schema(description="Users that hold this role")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public List<User> users;
-
-    // The fields below are linking this role to a global IMS role
-    @Schema(description="ID of a global role to inherit tasks from")
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    public Long globalRoleId;
-
-    @Schema(description="Name of a global role to inherit tasks from")
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    public String globalRoleName;
-
-    @Schema(description="Inherited tasks")
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    public String globalRoleTasks; // Markdown
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public RoleStatus status = null;
@@ -111,9 +107,7 @@ public class Role extends VersionInfo {
         this.role = role.role;
         this.name = role.name;
         this.tasks = role.tasks;
-        this.globalRoleId = role.globalRoleId;
-        this.globalRoleName = role.globalRoleName;
-        this.globalRoleTasks = role.globalRoleTasks;
+        this.assignable = role.assignable;
         this.status = RoleStatus.of(role.status);
 
         this.version = role.version;

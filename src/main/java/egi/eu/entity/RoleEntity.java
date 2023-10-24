@@ -1,6 +1,5 @@
 package egi.eu.entity;
 
-import egi.eu.model.Process;
 import org.hibernate.annotations.UpdateTimestamp;
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import io.quarkus.panache.common.Sort;
@@ -25,7 +24,7 @@ public class RoleEntity extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
-    @Column(length = 20)
+    @Column(length = 50)
     @NotNull
     public String role;
 
@@ -36,13 +35,7 @@ public class RoleEntity extends PanacheEntityBase {
     @Column(length = 4096)
     public String tasks; // Markdown
 
-    public Long globalRoleId;
-
-    @Column(length = 50)
-    public String globalRoleName;
-
-    @Column(length = 4096)
-    public String globalRoleTasks; // Markdown
+    public boolean assignable;
 
     public int status;
 
@@ -66,7 +59,11 @@ public class RoleEntity extends PanacheEntityBase {
     /***
      * Constructor
      */
-    public RoleEntity() { super(); }
+    public RoleEntity() {
+        super();
+
+        this.assignable = false;
+    }
 
     /***
      * Copy constructor with new status
@@ -80,9 +77,7 @@ public class RoleEntity extends PanacheEntityBase {
         this.role = role.role;
         this.name = role.name;
         this.tasks = role.tasks;
-        this.globalRoleId = role.globalRoleId;
-        this.globalRoleName = role.globalRoleName;
-        this.globalRoleTasks = role.globalRoleTasks;
+        this.assignable = role.assignable;
         this.status = newStatus.getValue();
 
         this.version = role.version + 1;
@@ -110,17 +105,15 @@ public class RoleEntity extends PanacheEntityBase {
         this.role = role.role;
         this.name = role.name;
         this.tasks = role.tasks;
-        this.globalRoleId = role.globalRoleId;
-        this.globalRoleName = role.globalRoleName;
-        this.globalRoleTasks = role.globalRoleTasks;
+        this.assignable = role.assignable;
 
         if(null == latest)
-            this.status = Process.ProcessStatus.DRAFT.getValue();
+            this.status = Role.RoleStatus.DRAFT.getValue();
         else {
             final var latestStatus = Role.RoleStatus.of(latest.status);
             if (Role.RoleStatus.IMPLEMENTED == latestStatus)
                 // Changing an implemented role will require a new implementation
-                this.status = Process.ProcessStatus.DRAFT.getValue();
+                this.status = Role.RoleStatus.DRAFT.getValue();
             else
                 this.status = latestStatus.getValue();
         }
@@ -131,7 +124,7 @@ public class RoleEntity extends PanacheEntityBase {
      * @return All role entities, sorted in reverse chronological order (head of the list is the latest).
      */
     public static Uni<List<RoleEntity>> getAllRoles() {
-        return findAll(Sort.by("changedOn").descending()).list();
+        return findAll().list();
     }
 
     /***
@@ -139,7 +132,7 @@ public class RoleEntity extends PanacheEntityBase {
      * @return Role entity
      */
     public static Uni<RoleEntity> getRoleLastVersion(String role) {
-        return find("role", Sort.by("version").descending(), role).firstResult();
+        return find("role = ?1 ORDER BY version DESC", role).firstResult();
     }
 
     /***
@@ -147,7 +140,7 @@ public class RoleEntity extends PanacheEntityBase {
      * @return Role entities
      */
     public static Uni<List<RoleEntity>> getRoleAllVersions(String role) {
-        return find("role", Sort.by("version").descending(), role).list();
+        return list("role = ?1 ORDER BY version DESC", role);
     }
 
     /***

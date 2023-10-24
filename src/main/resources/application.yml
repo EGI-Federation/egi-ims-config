@@ -19,7 +19,7 @@ egi:
     co-id: 2
     cache-vo-members: 600000 # milliseconds
     cache-roles: 60000 # milliseconds
-    trace-roles: true
+    trace-roles: false
   qos:
     quantiles: [0.95]
     slos: [500] # SLOs in milliseconds
@@ -88,7 +88,7 @@ quarkus:
     urls-primary-name: default
   smallrye-openapi:
     path: /openapi
-    info-version: 1.0.0
+    info-version: 1.0.2
     security-scheme-name: OIDC
     security-scheme-description: OpenID Connect access token issued by EGI Check-In
     security-scheme: jwt

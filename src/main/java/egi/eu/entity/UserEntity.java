@@ -22,9 +22,9 @@ public class UserEntity extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 120)
     @NotNull
-    public Long checkinUserId;
+    public String checkinUserId;
 
     public String fullName;
 
@@ -48,18 +48,18 @@ public class UserEntity extends PanacheEntityBase {
     }
 
     /***
-     * See which users already exist in the database
-     * @return List with existing users
+     * Get user with specified Id
+     * @return User entity
      */
-    public static Uni<List<UserEntity>> findUsersWithCheckinUserIds(List<Long> checkinUserIds) {
-        return list("checkinUserId in ?1", checkinUserIds);
+    public static Uni<UserEntity> findByCheckinUserId(String checkinUserId) {
+        return find("checkinUserId", checkinUserId).firstResult();
     }
 
     /***
      * See which users already exist in the database
      * @return List with existing users
      */
-    public static Uni<UserEntity> findByCheckinUserId(Long checkinUserId) {
-        return find("checkinUserId", checkinUserId).firstResult();
+    public static Uni<List<UserEntity>> findByCheckinUserIds(List<String> checkinUserIds) {
+        return list("checkinUserId in ?1", checkinUserIds);
     }
 }

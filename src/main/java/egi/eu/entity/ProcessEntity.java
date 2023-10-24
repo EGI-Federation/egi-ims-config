@@ -125,7 +125,7 @@ public class ProcessEntity extends PanacheEntityBase {
      * @param latest The latest version in the database
      * @param users The users that already exist in the database
      */
-    public ProcessEntity(Process process, ProcessEntity latest, Map<Long, UserEntity> users) {
+    public ProcessEntity(Process process, ProcessEntity latest, Map<String, UserEntity> users) {
         super();
 
         // Copy simple fields
@@ -182,7 +182,7 @@ public class ProcessEntity extends PanacheEntityBase {
                     if(reqe.responsibles.size() != reql.responsibles.size())
                         hasChanged = true;
                     else {
-                        var responsibles = new HashSet<Long>(); // Responsible users in the latest version
+                        var responsibles = new HashSet<String>(); // Responsible users in the latest version
                         for(var resp : reql.responsibles)
                             responsibles.add(resp.checkinUserId);
                         for(var resp : reqe.responsibles)
@@ -239,7 +239,7 @@ public class ProcessEntity extends PanacheEntityBase {
      * @return List with latest version of the entity
      */
     public static Uni<List<ProcessEntity>> getLastVersionAsList() {
-        return findAll(Sort.by("version").descending()).range(0,0).list();
+        return find("ORDER BY version DESC").range(0,0).list();
     }
 
     /***
@@ -247,10 +247,7 @@ public class ProcessEntity extends PanacheEntityBase {
      * @return Latest version of the entity
      */
     public static Uni<ProcessEntity> getLastVersion() {
-        return getLastVersionAsList()
-                .onItem().transformToUni(list -> {
-                    return Uni.createFrom().item((ProcessEntity)list.get(0));
-                });
+        return find("ORDER BY version DESC").firstResult();
     }
 
     /***
@@ -258,7 +255,7 @@ public class ProcessEntity extends PanacheEntityBase {
      * @return All versions of the entity, sorted in reverse chronological order (head of the list is the latest).
      */
     public static Uni<List<ProcessEntity>> getAllVersions() {
-        return findAll(Sort.by("version").descending()).list();
+        return find("ORDER BY version DESC").list();
     }
 
     /***
@@ -266,7 +263,7 @@ public class ProcessEntity extends PanacheEntityBase {
      * @return All versions of the entity, sorted in reverse chronological order (head of the list is the latest).
      */
     public static Uni<List<ProcessEntity>> getAllVersions(int index, int size) {
-        return findAll(Sort.by("version").descending()).page(index, size).list();
+        return find("ORDER BY version DESC").page(index, size).list();
     }
 
     /***
@@ -304,7 +301,7 @@ public class ProcessEntity extends PanacheEntityBase {
         /***
          * Copy constructor
          */
-        public Requirement(Process.Requirement requirement, Map<Long, UserEntity> users) {
+        public Requirement(Process.Requirement requirement, Map<String, UserEntity> users) {
             super();
 
             this.code = requirement.code;
