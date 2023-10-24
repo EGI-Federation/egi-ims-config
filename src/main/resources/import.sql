@@ -1,74 +1,92 @@
-insert into slm.users (checkinuserid, fullname, email)
-values (6166, 'Levente Farkas', 'levente@egi.eu'),
-       (171, 'Giuseppe La Rocca', 'giuseppe@egi.eu');
+insert into sys.users (checkinuserid, fullname, email)
+values ('e9c37aa0d1cf14c56e560f9f9915da6761f54383badb501a2867bc43581b835c@egi.eu', 'Levente Farkas', 'levente.farkas@egi.eu');
 
-insert into slm.roles (role, name, version, status, changedon, changedescription, tasks, globalRoleId)
-values ('process-owner', 'Process Owner', 1, 1, '2021-02-19T19:23:18', 'First version', 'Inherited', 1),
-       ('process-manager', 'Process Manager', 1, 1, '2021-02-19T19:23:18', 'First version', 'Inherited', 2),
-       ('process-staff', 'Process Staff', 1, 1, '2021-02-19T19:23:18', 'First version', 'Inherited', 3),
-       ('report-owner', 'Report Owner', 1, 1, '2021-02-19T19:23:18', 'First version', 'Inherited', 4),
-       ('catalog-owner', 'Service Catalog Owner', 1, 1, '2021-02-19T19:23:18', 'First version',
-        '- Maintain Service Catalogue
-- Provide access to appropriate parts of the service catalogue(s) to its customers, users and other interested parties', null),
-       ('sla-owner', 'Service Level Agreement Owner', 1, 1, '2021-02-19T19:23:18', 'First version',
-        '- Maintain the SLA under his/her ownership and ensure it is specified and documented according to relevant specifications
-- Evaluate the fulfillment of the SLA
-- Ensure that violations of the targets defined in the SLA are identified and investigated to prevent future recurrence
-- Perform regular reviews of the SLA
-- Understand new or changed requirements of the SLA under his/her ownership, and initiate necessary updates or other follow-up actions', null),
-       ('ola-owner', 'Operational Level Agreement Owner', 1, 1, '2021-02-19T19:23:18', 'First version',
-        '- Maintain the OLA under his/her ownership and ensure it is specified and documented according to relevant specifications
-- Evaluate the fulfillment of the OLA
-- Ensure that violations of the targets defined in the OLA are identified and investigated to prevent future recurrence
-- Perform regular reviews of the OLA
-- Understand new or changed requirements of the OLA under his/her ownership, and initiate necessary updates or other follow-up actions', null),
-       ('ua-owner', 'Underpinning Agreement Owner', 1, 1, '2021-02-19T19:23:18', 'First version',
-        '- Maintain the UA under his/her ownership and ensure it is specified and documented according to relevant specifications
-- Evaluate the fulfillment of the UA
-- Ensure that violations of the targets defined in the UA are identified and investigated to prevent future recurrence
-- Perform regular reviews of the UA
-- Understand new or changed requirements of the UA under his/her ownership, and initiate necessary updates or other follow-up actions', null),
-       ('process-developer', 'Process Developer', 1, 0, '2023-09-02T19:23:18', 'First version', '...', null),
-       ('process-developer', 'Process Developer', 2, 0, '2023-09-02T19:23:18', 'Second version',
-        '- Make the necessary software changes to the SLM API so that requested changes to process, procedure, KPI, and role entities are implemented
-- Improve the IMS front-end to allow exploiting all features of the SLM API', null);
+insert into sys.roles (role, name, version, status, changedon, changedescription, assignable, tasks)
+values ('process-staff', 'Process Staff', 1, 1, '2021-02-19T19:23:18', 'First version', false,
+'TBD'),
 
-insert into slm.role_editor (role_id, user_id)
-values (1, 2),
-       (2, 2),
-       (3, 2),
-       (4, 2),
-       (5, 2),
-       (6, 2),
-       (7, 2),
+       ('process-owner', 'Process Owner', 1, 1, '2021-02-19T19:23:18', 'First version', false,
+'Act as the primary contact point for concerns in the context of governing one specific IMS process.
+- Define and approve goals and policies in the context of the process according to the overall IMS goals and policies
+- Nominate the process manager, and ensure he/she is competent to fulfill this role
+- Approve changes/improvements to the operational process, such as (significant) changes to the process definition
+- Decide on the provision of resources dedicated to the process and its activities
+- Based on process monitoring and reviews, decide on necessary changes in the process-specific goals, policies and provided resources'),
+
+       ('process-manager', 'Process Manager', 1, 1, '2021-02-19T19:23:18', 'First version', false,
+'Act as the primary contact point for operational concerns in the context of the process.
+- Maintain the process definition/description and ensure it is available to relevant persons
+- Maintain an adequate level of awareness and competence of the people involved in the process
+- Monitor and keep track of the process execution and results (incl. process reviews)
+- Report on process performance to the process owner
+- Escalate to the process owner, if necessary
+- Identify opportunities for improving the effectiveness and efficiency of the process'),
+
+       ('report-owner', 'Report Owner', 1, 1, '2021-02-19T19:23:18', 'First version', false,
+'TBD'),
+
+       ('service-owner', 'Service Owner', 1, 1, '2021-02-19T19:23:18', 'First version', false,
+'Overall responsibility for one specific service which is part of the service portfolio.
+- Act as the primary contact point for all (process-independent) concerns in the context of that specific service
+- Act as an “expert” for the service in technical and non-technical concerns
+- Maintain the core service documentation, such as the service specification/description
+- Be kept informed of every event, situation or change connected to the service
+- Be involved in tasks significantly related to the service as part of selected IMS processes, in particular, SPM and SLM (see: process-specific role models)
+- Report on the service to the IMS owner
+- Define and maintain individual service roadmap with annual objectives for a 3-year period, a summary of resources needed (including financial), usage and satisfaction statistics'),
+
+       ('ims-owner', 'IMS Owner', 1, 1, '2021-02-19T19:23:18', 'First version', true,
+'Senior accountable owner of the entire Integrated Management System (IMS).
+- Overall accountability for all IMS-related activities
+- Act as the primary contact point for concerns in the context of governing the entire IMS
+- Define and approve goals and policies for the entire IMS
+- Nominate the process owners and/or managers, and ensure they are competent to fulfill their roles
+- Approve the first definition of processes/procedures
+- Approve changes to the overall IMS
+- Decide on the provision of resources dedicated to IMS
+- Based on monitoring and reviews, decide on necessary changes in the goals, policies and provide resources for the IMS
+- Appoint and approve service owners'),
+
+       ('ims-manager', 'IMS Manager', 1, 1, '2021-02-19T19:23:18', 'First version', true,
+'Act as the primary contact point for all tactical concerns (including planning and development) in the context of the entire IMS.
+- Maintain the service management plan and ensure it is available to relevant stakeholders
+- Ensure service management processes are implemented according to approved goals and policies
+- Maintain an adequate level of awareness and competence of the people involved in the IMS, in particular, the process managers
+- Monitor and keep track of the suitability, effectiveness and maturity of the entire IMS
+- Report and, if necessary, escalate to the IMS owner
+- Identify opportunities for improving the effectiveness and efficiency of the IMS'),
+
+       ('ims-developer', 'IMS Developer', 1, 0, '2023-09-02T19:23:18', 'First version', true,
+'- Make the necessary software changes to Management System API so that requested changes to the management system,
+governance body, budget, policy, task, workshop, procedure, KPI, report, and role entities are implemented
+- Improve the IMS front-end to allow exploiting all features of the Management System API'),
+
+       ('strategy-coordinator', 'Strategy Coordinator', 1, 1, '2021-02-19T19:23:18', 'First version', true,
+'Is part of the IMS coordination team responsible for strategic decisions related to the IMS, chaired by the IMS owner.
+- Support the IMS owner at the strategic level of IMS
+- Maintain a formal communication channel between the IMS owner and the IMS manager'),
+
+       ('operations-coordinator', 'Operations Coordinator', 1, 1, '2021-02-19T19:23:18', 'First version', true,
+'Is part of the team responsible for overall monitoring of the IMS, chaired by the IMS manager.
+- Support the IMS owner at the operations level of IMS
+- Maintain a formal communication channel between the CSI process and the IMS manager');
+
+insert into sys.role_editor (role_id, user_id)
+values (1, 1),
+       (2, 1),
+       (3, 1),
+       (4, 1),
+       (5, 1),
+       (6, 1),
+       (7, 1),
        (8, 1),
        (9, 1),
-       (10, 2);
+       (10, 1);
 
-insert into slm.processes (goals, scope, status, reviewfrequency, frequencyunit, nextreview, changedon, changedescription, contact)
-VALUES ('The primary purpose of this process is...',
-        'The scope of this process is...',
-        0, 1, 'year', '2021-05-14', '2021-02-19T19:23:18', 'First draft', null),
+insert into sys.processes (status, reviewfrequency, frequencyunit, nextreview, changedon, changedescription, contact, goals, scope)
+VALUES (0, 1, 'year', '2024-05-14', '2021-02-19T19:23:18', 'First draft', null,
+        'The primary purpose of this process is...',
+        'The scope of this process is...');
 
-       ('The primary purpose of this process is to
-- Define, agree (with customers), and monitor service level agreements (SLAs)
-- Define, agree (with federation members and suppliers), and monitor operation level agreements (OLAs)
-- Define, agree (with suppliers), and monitor underpinning agreements (UA).',
-        '- **Internal catalogue** - services are covered by Corporate SLA, no custom SLAs are foreseen.
-- **External catalogue**:
-    - **Category**:  dedicated custom SLA (VO SLA) upon customer request. If no VO SLA in place, Corporate SLA is applicable.
-        - Online Storage
-        - Check-in
-        - EGI Notebooks
-        - Cloud Compute
-        - Cloud Container Compute
-        - High-Throughput Compute
-    - **Training**: Corporate SLA together with contract signed for training delivery
-        - FitSM training
-        - ISO27k training
-    - **Other**: Corporate SLA, no custom SLAs are foreseen.',
-        2, 8, 'day', '2023-11-14', '2021-05-14T22:03:18', 'Updated version', 'contact@egi.eu');
-
-insert into slm.process_editor (process_id, user_id)
-values (1, 2),
-       (2, 2);
+insert into sys.process_editor (process_id, user_id)
+values (1, 1);
