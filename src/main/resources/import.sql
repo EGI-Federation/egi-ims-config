@@ -1,7 +1,7 @@
-insert into sys.users (checkinuserid, fullname, email)
+insert into ims.users (checkinuserid, fullname, email)
 values ('e9c37aa0d1cf14c56e560f9f9915da6761f54383badb501a2867bc43581b835c@egi.eu', 'Levente Farkas', 'levente.farkas@egi.eu');
 
-insert into sys.roles (role, name, version, status, changedon, changedescription, assignable, tasks)
+insert into ims.roles (role, name, version, status, changedon, changedescription, assignable, tasks)
 values ('process-staff', 'Process Staff', 1, 1, '2021-02-19T19:23:18', 'First version', false,
 'TBD'),
 
@@ -71,7 +71,7 @@ governance body, budget, policy, task, workshop, procedure, KPI, report, and rol
 - Support the IMS owner at the operations level of IMS
 - Maintain a formal communication channel between the CSI process and the IMS manager');
 
-insert into sys.role_editor (role_id, user_id)
+insert into ims.role_editor_map (role_id, user_id)
 values (1, 1),
        (2, 1),
        (3, 1),
@@ -83,10 +83,10 @@ values (1, 1),
        (9, 1),
        (10, 1);
 
-insert into sys.processes (status, reviewfrequency, frequencyunit, nextreview, changedon, changedescription, contact, goals, scope)
+insert into ims.process (status, reviewfrequency, frequencyunit, nextreview, changedon, changedescription, contact, goals, scope)
 VALUES (0, 1, 'year', '2024-05-14', '2021-02-19T19:23:18', 'First draft', null,
         'The primary purpose of this process is...',
         'The scope of this process is...');
 
-insert into sys.process_editor (process_id, user_id)
+insert into ims.process_editor_map (process_id, user_id)
 values (1, 1);
