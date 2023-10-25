@@ -26,7 +26,7 @@ egi:
 
 quarkus:
   application:
-    name: sys-api
+    name: ims-api
   oidc:
     auth-server-url: https://aai-demo.egi.eu/auth/realms/egi
     application-type: service
@@ -48,7 +48,7 @@ quarkus:
         ~: false
     file:
       enable: true
-      path: logs/sys-api.json
+      path: logs/ims-api.json
       format: "%d{HH:mm:ss} %-5p traceId=%X{traceId}, parentId=%X{parentId}, spanId=%X{spanId}, sampled=%X{sampled} [%c{2.}] (%t) %s%e%n"
       rotation:
         max-file-size: 1M
@@ -83,12 +83,12 @@ quarkus:
     path: /swagger-ui
     theme: flattop
     urls:
-      default: /api/sys/openapi
+      default: /api/ims/openapi
       local: /openapi
     urls-primary-name: default
   smallrye-openapi:
     path: /openapi
-    info-version: 1.0.4
+    info-version: 1.0.5
     security-scheme-name: OIDC
     security-scheme-description: OpenID Connect access token issued by EGI Check-In
     security-scheme: jwt
@@ -113,7 +113,7 @@ quarkus:
       enabled: false
       pattern: "%r -> %s\n%{ALL_REQUEST_HEADERS}\n"
       log-to-file: true
-      base-file-name: sys-api-
+      base-file-name: ims-api-
       log-directory: logs
   tls:
     trust-all: false
@@ -124,7 +124,7 @@ quarkus:
     reactive:
       url: postgresql://localhost:5432/ims
       additional-properties:
-        search_path: sys # Default schema
+        search_path: ims # Default schema
     username: ims
     password: password
     devservices:

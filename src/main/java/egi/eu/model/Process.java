@@ -17,7 +17,7 @@ import egi.eu.entity.ProcessEntity;
  */
 public class Process extends VersionInfo {
 
-    final static String PROCESS_CODE = "SLM";
+    final static String PROCESS_CODE = "IMS";
 
     public enum ProcessStatus {
         DRAFT(0),
