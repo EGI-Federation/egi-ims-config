@@ -131,7 +131,7 @@ public class TheProcess extends BaseResource {
             .chain(versions -> {
                 // Got a list of versions
                 if (!versions.isEmpty())
-                    log.info("Got process versions");
+                    log.info("Got process info");
 
                 var proc = new Process(versions);
                 return Uni.createFrom().item(Response.ok(proc).build());
@@ -199,8 +199,7 @@ public class TheProcess extends BaseResource {
 
                         // Get users linked to this process that already exist in the database
                         var ids = new HashSet<String>();
-                        if(null != process.changeBy)
-                            ids.add(process.changeBy.checkinUserId);
+                        ids.add(process.changeBy.checkinUserId);
                         if(null != process.requirements)
                             for(var req : process.requirements)
                                 if(null != req.responsibles)

@@ -90,3 +90,39 @@ VALUES (0, 1, 'year', '2024-05-14', '2021-02-19T19:23:18', 'First draft', null,
 
 insert into ims.process_editor_map (process_id, user_id)
 values (1, 1);
+
+insert into ims.governance (changedon, changedescription, title, description)
+VALUES ('2023-10-19T19:23:18', 'First draft', 'EGI Foundation Governance',
+'...');
+
+insert into ims.governance_editor_map (governance_id, user_id)
+values (1, 1);
+
+insert into ims.governance_annexes (body, composition, meeting, decisionVoting)
+VALUES ('**Council** ([ToR](https://documents.egi.eu/document/152))',
+'The core participants of the Council consist of national based e-Infrastructure federations called NGIs.
+
+Countries (be they EU member states, associate countries or third countries – as recognised by the European Commission) may become members of the Council represented by the lead or other appropriate organisation within a given NGI.
+
+International Research Infrastructures (e.g. EIROs, ESFRIs) may also become members of the Council where there is a legally recognised Intergovernmental Organisation such as an ERIC or an EIRO.',
+'The Council meets at least twice a year, face-to-face: first within six months after the expiry of any financial year in order to adopt the annual account of the past year and then in the second six month period in order to approve the budget for the following calendar year.
+
+The Council will furthermore meet whenever deemed necessary by the chairperson, or by two representatives of Participants or a member of the Executive Board.
+
+Virtual meetings are not possible, only face-to-face meetings are envisioned.',
+'Generally by consensus with a required quorum in some cases.
+
+1 vote submission per representative (number of votes counted per submission differ by participation level).');
+
+insert into ims.governance_annexes_map (governance_id, annex_id)
+values (1, 1);
+
+insert into ims.governance_annex_interfaces (interfacesWith, comment)
+VALUES ('BDS', null),
+       ('CAPM', null),
+       ('SPM', 'via the SSB');
+
+insert into ims.governance_annex_interfaces_map (annex_id, interface_id)
+values (1, 1),
+       (1, 2),
+       (1, 3);
