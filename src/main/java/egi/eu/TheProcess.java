@@ -8,6 +8,7 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.RestHeader;
 import org.jboss.resteasy.reactive.RestQuery;
@@ -32,13 +33,14 @@ import egi.eu.model.*;
 
 
 /***
- * Resource for process configuration queries and operations.
+ * Resource for process queries and operations.
  */
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
-public class Configuration extends BaseResource {
+@Tag(name = "Process")
+public class TheProcess extends BaseResource {
 
-    private static final Logger log = Logger.getLogger(Configuration.class);
+    private static final Logger log = Logger.getLogger(TheProcess.class);
 
     @Inject
     MeterRegistry registry;
@@ -79,7 +81,7 @@ public class Configuration extends BaseResource {
     /***
      * Constructor
      */
-    public Configuration() { super(log); }
+    public TheProcess() { super(log); }
 
     /**
      * Get process configuration.
