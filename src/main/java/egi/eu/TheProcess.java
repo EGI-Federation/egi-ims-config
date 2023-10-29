@@ -131,7 +131,7 @@ public class TheProcess extends BaseResource {
             .chain(versions -> {
                 // Got a list of versions
                 if (!versions.isEmpty())
-                    log.info("Got process info");
+                    log.info("Got process versions");
 
                 var proc = new Process(versions);
                 return Uni.createFrom().item(Response.ok(proc).build());

@@ -83,17 +83,14 @@ values (1, 1),
        (9, 1),
        (10, 1);
 
-insert into ims.process (status, reviewfrequency, frequencyunit, nextreview, changedon, changedescription, contact, goals, scope)
-VALUES (0, 1, 'year', '2024-05-14', '2021-02-19T19:23:18', 'First draft', null,
-        'The primary purpose of this process is...',
-        'The scope of this process is...');
+insert into ims.process (status, reviewfrequency, frequencyunit, nextreview, changedon, changedescription, contact, description)
+VALUES (0, 1, 'year', '2024-05-14', '2021-02-19T19:23:18', 'First draft', 'contact@egi.eu', null);
 
 insert into ims.process_editor_map (process_id, user_id)
 values (1, 1);
 
 insert into ims.governance (changedon, changedescription, title, description)
-VALUES ('2023-10-19T19:23:18', 'First draft', 'EGI Foundation Governance',
-'...');
+VALUES ('2023-10-19T19:23:18', 'First draft', 'EGI Foundation Governance', null);
 
 insert into ims.governance_editor_map (governance_id, user_id)
 values (1, 1);
