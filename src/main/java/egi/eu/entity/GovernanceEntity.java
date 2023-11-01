@@ -1,6 +1,5 @@
 package egi.eu.entity;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import io.smallrye.mutiny.Uni;
 import jakarta.persistence.*;
@@ -33,10 +32,10 @@ public class GovernanceEntity extends PanacheEntityBase {
 
     @ManyToMany(fetch = FetchType.EAGER,
                 cascade = { CascadeType.PERSIST })
-    @JoinTable(name = "governance_annexes_map",
+    @JoinTable(name = "governance_groups_map",
                joinColumns = { @JoinColumn(name = "governance_id") },
-               inverseJoinColumns = { @JoinColumn(name = "annex_id") })
-    public Set<Annex> annexes = null;
+               inverseJoinColumns = { @JoinColumn(name = "group_id") })
+    public Set<Group> groups = null;
 
     // Change tracking
     @Column(nullable = false, unique = true, insertable = false, updatable = false, columnDefinition = "serial")
@@ -45,7 +44,7 @@ public class GovernanceEntity extends PanacheEntityBase {
     @UpdateTimestamp
     public LocalDateTime changedOn;
 
-    @Column(length = 1024)
+    @Column(length = 2048)
     public String changeDescription;
 
     @ManyToOne(fetch = FetchType.EAGER,
@@ -73,9 +72,9 @@ public class GovernanceEntity extends PanacheEntityBase {
         this.description = governance.description;
 
         // Copy annexes
-        if(null != governance.annexes) {
-            this.annexes = new HashSet<>();
-            this.annexes.addAll(governance.annexes);
+        if(null != governance.groups) {
+            this.groups = new HashSet<>();
+            this.groups.addAll(governance.groups);
         }
     }
 
@@ -101,42 +100,42 @@ public class GovernanceEntity extends PanacheEntityBase {
         this.description = governance.description;
 
         // Link to the annexes that stayed the same, create new ones for the ones that changed
-        if(null != governance.annexes) {
-            this.annexes = new HashSet<>();
-            for(var anne : governance.annexes) {
+        if(null != governance.groups) {
+            this.groups = new HashSet<>();
+            for(var grpe : governance.groups) {
                 // See if there is such an annex in the latest version
-                GovernanceEntity.Annex annl = null;
-                if(null != latest.annexes)
-                    for(var ann : latest.annexes)
-                        if(ann.id.equals(anne.id)) {
-                            annl = ann;
+                Group grpl = null;
+                if(null != latest.groups)
+                    for(var ann : latest.groups)
+                        if(ann.id.equals(grpe.id)) {
+                            grpl = ann;
                             break;
                         }
 
-                if(null == annl) {
+                if(null == grpl) {
                     // This is a new annex
-                    this.annexes.add(new Annex(anne, null));
+                    this.groups.add(new Group(grpe, null));
                     continue;
                 }
 
                 // See if this annex has changed
                 boolean hasChanged = (
-                        !Utils.equalStrings(anne.body, annl.body) ||
-                        !Utils.equalStrings(anne.composition, annl.composition) ||
-                        !Utils.equalStrings(anne.meeting, annl.meeting) ||
-                        !Utils.equalStrings(anne.decisionVoting, annl.decisionVoting) ||
-                       (null == anne.interfaces) != (null == annl.interfaces));
+                        !Utils.equalStrings(grpe.body, grpl.body) ||
+                        !Utils.equalStrings(grpe.composition, grpl.composition) ||
+                        !Utils.equalStrings(grpe.meeting, grpl.meeting) ||
+                        !Utils.equalStrings(grpe.decisionVoting, grpl.decisionVoting) ||
+                       (null == grpe.interfaces) != (null == grpl.interfaces));
 
                 // Link to the interfaces that stayed the same, create new ones for the ones that changed
-                Map<Long, Annex.Interface> unchangedInterfaces = new HashMap<>();
+                Map<Long, Group.Interface> unchangedInterfaces = new HashMap<>();
 
-                if(null != anne.interfaces && null != annl.interfaces) {
-                    if(anne.interfaces.size() != annl.interfaces.size())
+                if(null != grpe.interfaces && null != grpl.interfaces) {
+                    if(grpe.interfaces.size() != grpl.interfaces.size())
                         hasChanged = true;
 
-                    for(var itfe : anne.interfaces) {
+                    for(var itfe : grpe.interfaces) {
                         boolean itfChanged = true;
-                        for(var itfl : annl.interfaces) {
+                        for(var itfl : grpl.interfaces) {
                             if(itfe.id.equals(itfl.id)) {
                                 if(Utils.equalStrings(itfl.interfacesWith, itfe.interfacesWith) &&
                                    Utils.equalStrings(itfl.comment, itfl.comment)) {
@@ -154,9 +153,9 @@ public class GovernanceEntity extends PanacheEntityBase {
                 }
 
                 if(hasChanged)
-                    this.annexes.add(new Annex(anne, unchangedInterfaces));
+                    this.groups.add(new Group(grpe, unchangedInterfaces));
                 else
-                    this.annexes.add(annl);
+                    this.groups.add(grpl);
             }
         }
     }
@@ -197,8 +196,8 @@ public class GovernanceEntity extends PanacheEntityBase {
      * Some annex to the governance
      */
     @Entity
-    @Table(name = "governance_annexes")
-    public static class Annex extends PanacheEntityBase {
+    @Table(name = "governance_groups")
+    public static class Group extends PanacheEntityBase {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -218,30 +217,30 @@ public class GovernanceEntity extends PanacheEntityBase {
 
         @ManyToMany(fetch = FetchType.EAGER,
                     cascade = { CascadeType.PERSIST })
-        @JoinTable(name = "governance_annex_interfaces_map",
-                   joinColumns = { @JoinColumn(name = "annex_id") },
+        @JoinTable(name = "governance_group_interfaces_map",
+                   joinColumns = { @JoinColumn(name = "group_id") },
                    inverseJoinColumns = { @JoinColumn(name = "interface_id") })
         public Set<Interface> interfaces = null;
 
         /***
          * Constructor
          */
-        public Annex() { super(); }
+        public Group() { super(); }
 
         /***
          * Copy constructor
          */
-        public Annex(Governance.Annex annex, Map<Long, GovernanceEntity.Annex.Interface> unchangedInterfaces) {
+        public Group(Governance.Group group, Map<Long, GovernanceEntity.Group.Interface> unchangedInterfaces) {
             super();
 
-            this.body = annex.body;
-            this.composition = annex.composition;
-            this.meeting = annex.meeting;
-            this.decisionVoting = annex.decisionVoting;
+            this.body = group.body;
+            this.composition = group.composition;
+            this.meeting = group.meeting;
+            this.decisionVoting = group.decisionVoting;
 
-            if(null != annex.interfaces) {
+            if(null != group.interfaces) {
                 this.interfaces = new HashSet<>();
-                for(var itf : annex.interfaces) {
+                for(var itf : group.interfaces) {
                     if(null != unchangedInterfaces && unchangedInterfaces.containsKey(itf.id)) {
                         // Interface already exists in the database
                         var itfEntity = unchangedInterfaces.get(itf.id);
@@ -249,7 +248,7 @@ public class GovernanceEntity extends PanacheEntityBase {
                     }
                     else {
                         // New interface
-                        var itfEntity = new Interface(itf);
+                        var itfEntity = new Group.Interface(itf);
                         this.interfaces.add(itfEntity);
                     }
                 }
@@ -261,7 +260,7 @@ public class GovernanceEntity extends PanacheEntityBase {
          * Interface of an annexes to the governance
          */
         @Entity
-        @Table(name = "governance_annex_interfaces")
+        @Table(name = "governance_group_interfaces")
         public static class Interface extends PanacheEntityBase {
 
             @Id
@@ -285,7 +284,7 @@ public class GovernanceEntity extends PanacheEntityBase {
             /***
              * Copy constructor
              */
-            public Interface(Governance.Annex.Interface itf) {
+            public Interface(Governance.Group.Interface itf) {
                 super();
 
                 this.interfacesWith = itf.interfacesWith;

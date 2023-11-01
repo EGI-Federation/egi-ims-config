@@ -2,7 +2,6 @@ package egi.eu.entity;
 
 import org.hibernate.annotations.UpdateTimestamp;
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
-import io.quarkus.panache.common.Sort;
 import io.smallrye.common.constraint.NotNull;
 import io.smallrye.mutiny.Uni;
 import jakarta.persistence.*;
@@ -45,7 +44,7 @@ public class RoleEntity extends PanacheEntityBase {
     @UpdateTimestamp
     public LocalDateTime changedOn;
 
-    @Column(length = 1024)
+    @Column(length = 2048)
     public String changeDescription;
 
     @ManyToOne(fetch = FetchType.EAGER,

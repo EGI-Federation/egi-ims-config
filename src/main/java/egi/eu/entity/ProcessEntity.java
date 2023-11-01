@@ -66,7 +66,7 @@ public class ProcessEntity extends PanacheEntityBase {
     @UpdateTimestamp
     public LocalDateTime changedOn;
 
-    @Column(length = 1024)
+    @Column(length = 2048)
     public String changeDescription;
 
     @ManyToOne(fetch = FetchType.EAGER,
