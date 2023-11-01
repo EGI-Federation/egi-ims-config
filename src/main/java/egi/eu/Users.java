@@ -32,7 +32,6 @@ import egi.checkin.CheckinConfig;
 import egi.checkin.model.CheckinUser;
 import egi.eu.entity.*;
 import egi.eu.model.*;
-import egi.eu.model.Process;
 
 
 /***
