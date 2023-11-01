@@ -61,6 +61,15 @@ public class TheResponsibilities extends BaseResource {
 
 
     /***
+     * Page of responsibilities
+     */
+    public static class PageOfResponsibilities extends Page<Responsibility, Long> {
+        public PageOfResponsibilities(String baseUri, long from, int limit, List<Responsibility> resps) {
+            // Always loads all (from database)
+            super(baseUri, from, limit, resps, true); }
+    }
+
+    /***
      * Review of the responsibilities
      */
     public static class ResponsibilityReview extends Review<Responsibility> {
@@ -86,7 +95,7 @@ public class TheResponsibilities extends BaseResource {
      * List process responsibilities.
      * @param auth The access token needed to call the service.
      * @param allVersions True to return all versions of the responsibilities.
-     * @return API Response, wraps an ActionSuccess({@link Users.PageOfResponsibilities}) or an ActionError entity
+     * @return API Response, wraps an ActionSuccess({@link PageOfResponsibilities}) or an ActionError entity
      */
     @GET
     @Path("/responsibilities")
@@ -96,7 +105,7 @@ public class TheResponsibilities extends BaseResource {
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = Users.PageOfResponsibilities.class))),
+                    schema = @Schema(implementation = PageOfResponsibilities.class))),
             @APIResponse(responseCode = "400", description="Invalid parameters or configuration",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ActionError.class))),

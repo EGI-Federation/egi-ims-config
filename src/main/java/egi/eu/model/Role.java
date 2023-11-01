@@ -1,13 +1,11 @@
 package egi.eu.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import egi.checkin.model.CheckinUser;
-import egi.eu.entity.RoleEntity;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.util.List;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
+
+import egi.eu.entity.RoleEntity;
 
 
 /***

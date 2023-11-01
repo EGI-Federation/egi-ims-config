@@ -614,7 +614,7 @@ public class TheProcess extends BaseResource {
     @Path("/process/reviews")
     @SecurityRequirement(name = "OIDC")
     @RolesAllowed( Role.IMS_USER)
-    @Operation(operationId = "listProcessReviews", summary = "List reviews of the process")
+    @Operation(operationId = "listProcessReviews", summary = "List process reviews")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "OK",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,

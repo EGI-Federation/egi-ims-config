@@ -107,15 +107,6 @@ public class Users extends BaseResource {
         }
     }
 
-    /***
-     * Page of responsibilities
-     */
-    public static class PageOfResponsibilities extends Page<Responsibility, Long> {
-        public PageOfResponsibilities(String baseUri, long from, int limit, List<Responsibility> resps) {
-            // Always loads all (from database)
-            super(baseUri, from, limit, resps, true); }
-    }
-
 
     /***
      * Constructor
@@ -142,7 +133,7 @@ public class Users extends BaseResource {
     @Path("/user/info")
     @SecurityRequirement(name = "OIDC")
     @RolesAllowed(Role.IMS_USER)
-    @Operation(operationId = "getUserInfo",  summary = "Retrieve information about authenticated user")
+    @Operation(operationId = "getUserInfo", summary = "Retrieve information about authenticated user")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
@@ -212,7 +203,7 @@ public class Users extends BaseResource {
     @Path("/users")
     @SecurityRequirement(name = "OIDC")
     @RolesAllowed({ Role.IMS_USER})
-    @Operation(operationId = "listUsers",  summary = "List users")
+    @Operation(operationId = "listUsers", summary = "List users")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
@@ -297,7 +288,7 @@ public class Users extends BaseResource {
     @SecurityRequirement(name = "OIDC")
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({ Role.IMS_OWNER, Role.IMS_MANAGER })
-    @Operation(operationId = "addUserToGroup",  summary = "Include user in the IMS process")
+    @Operation(operationId = "addUserToGroup", summary = "Include user in the IMS process")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Included",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
@@ -394,7 +385,7 @@ public class Users extends BaseResource {
     @SecurityRequirement(name = "OIDC")
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({ Role.IMS_OWNER, Role.IMS_MANAGER })
-    @Operation(operationId = "removeUserFromGroup",  summary = "Exclude user from the IMS process")
+    @Operation(operationId = "removeUserFromGroup", summary = "Exclude user from the IMS process")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Excluded",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
@@ -495,7 +486,7 @@ public class Users extends BaseResource {
     @Path("/users/roles")
     @SecurityRequirement(name = "OIDC")
     @RolesAllowed({ Role.IMS_USER })
-    @Operation(operationId = "listUsersWithRoles",  summary = "List users with roles in the IMS process")
+    @Operation(operationId = "listUsersWithRoles", summary = "List users with roles in the IMS process")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
@@ -610,7 +601,7 @@ public class Users extends BaseResource {
     @SecurityRequirement(name = "OIDC")
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({ Role.IMS_OWNER, Role.IMS_MANAGER })
-    @Operation(operationId = "assignRoleToUser",  summary = "Assign a role to a user",
+    @Operation(operationId = "assignRoleToUser", summary = "Assign a role to a user",
                description ="To assign roles to a user, the user must be included in the IMS process.")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Assigned",
@@ -724,7 +715,7 @@ public class Users extends BaseResource {
     @SecurityRequirement(name = "OIDC")
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({ Role.IMS_OWNER, Role.IMS_MANAGER })
-    @Operation(operationId = "revokeRoleFromUser",  summary = "Revoke a role from a user")
+    @Operation(operationId = "revokeRoleFromUser", summary = "Revoke a role from a user")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Revoked",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
@@ -838,7 +829,7 @@ public class Users extends BaseResource {
     @Path("/roles/assigned")
     @SecurityRequirement(name = "OIDC")
     @RolesAllowed({ Role.IMS_USER })
-    @Operation(operationId = "listAssignedRoles",  summary = "List assigned roles in the IMS process")
+    @Operation(operationId = "listAssignedRoles", summary = "List assigned roles in the IMS process")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
@@ -1014,7 +1005,7 @@ public class Users extends BaseResource {
     @SecurityRequirement(name = "OIDC")
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({ Role.IMS_OWNER, Role.IMS_MANAGER })
-    @Operation(operationId = "addRole",  summary = "Add new role")
+    @Operation(operationId = "addRole", summary = "Add new role")
     @APIResponses(value = {
             @APIResponse(responseCode = "201", description = "Added",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
@@ -1099,7 +1090,7 @@ public class Users extends BaseResource {
     @SecurityRequirement(name = "OIDC")
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({ Role.IMS_OWNER, Role.IMS_MANAGER })
-    @Operation(operationId = "updateRole",  summary = "Update role definition")
+    @Operation(operationId = "updateRole", summary = "Update role definition")
     @APIResponses(value = {
             @APIResponse(responseCode = "201", description = "Updated",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
@@ -1197,7 +1188,7 @@ public class Users extends BaseResource {
     @SecurityRequirement(name = "OIDC")
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({ Role.IMS_DEVELOPER })
-    @Operation(operationId = "implementRole",  summary = "Implement role")
+    @Operation(operationId = "implementRole", summary = "Implement role")
     @APIResponses(value = {
             @APIResponse(responseCode = "201", description = "Implemented",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
@@ -1304,7 +1295,7 @@ public class Users extends BaseResource {
     @SecurityRequirement(name = "OIDC")
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({ Role.IMS_OWNER })
-    @Operation(operationId = "deprecateRole",  summary = "Deprecate role")
+    @Operation(operationId = "deprecateRole", summary = "Deprecate role")
     @APIResponses(value = {
             @APIResponse(responseCode = "201", description = "Deprecated",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
