@@ -28,7 +28,7 @@ public class Governance extends VersionInfo {
     public String description; // Markdown
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public Set<Annex> annexes;
+    public Set<Group> groups;
 
     // Change history
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -61,8 +61,8 @@ public class Governance extends VersionInfo {
         this.title = governance.title;
         this.description = governance.description;
 
-        if(null != governance.annexes)
-            this.annexes = governance.annexes.stream().map(Governance.Annex::new).collect(Collectors.toSet());
+        if(null != governance.groups)
+            this.groups = governance.groups.stream().map(Governance.Group::new).collect(Collectors.toSet());
 
         this.version = governance.version;
         this.changedOn = governance.changedOn;
@@ -89,10 +89,10 @@ public class Governance extends VersionInfo {
     /***
      * Some annex to the governance
      */
-    public static class Annex {
+    public static class Group {
 
-        @Schema(enumeration={ "Annex" })
-        public String kind = "Annex";
+        @Schema(enumeration={ "Group" })
+        public String kind = "Group";
 
         public Long id;
 
@@ -115,20 +115,20 @@ public class Governance extends VersionInfo {
         /***
          * Constructor
          */
-        public Annex() {}
+        public Group() {}
 
         /***
          * Copy constructor
          */
-        public Annex(GovernanceEntity.Annex annex) {
-            this.id = annex.id;
-            this.body = annex.body;
-            this.composition = annex.composition;
-            this.meeting = annex.meeting;
-            this.decisionVoting = annex.decisionVoting;
+        public Group(GovernanceEntity.Group group) {
+            this.id = group.id;
+            this.body = group.body;
+            this.composition = group.composition;
+            this.meeting = group.meeting;
+            this.decisionVoting = group.decisionVoting;
 
-            if(null != annex.interfaces)
-                this.interfaces = annex.interfaces.stream().map(Interface::new).collect(Collectors.toSet());
+            if(null != group.interfaces)
+                this.interfaces = group.interfaces.stream().map(Interface::new).collect(Collectors.toSet());
         }
 
 
@@ -157,7 +157,7 @@ public class Governance extends VersionInfo {
             /***
              * Copy constructor
              */
-            public Interface(GovernanceEntity.Annex.Interface itf) {
+            public Interface(GovernanceEntity.Group.Interface itf) {
                 this.id = itf.id;
                 this.interfacesWith = itf.interfacesWith;
                 this.comment = itf.comment;

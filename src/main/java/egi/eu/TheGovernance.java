@@ -88,11 +88,11 @@ public class TheGovernance extends BaseResource {
             @APIResponse(responseCode = "403", description="Permission denied"),
             @APIResponse(responseCode = "503", description="Try again later")
     })
-    public Uni<Response> getConfiguration(@RestHeader(HttpHeaders.AUTHORIZATION) String auth,
+    public Uni<Response> getGovernance(@RestHeader(HttpHeaders.AUTHORIZATION) String auth,
 
-                                          @RestQuery("allVersions") @DefaultValue("false")
-                                          @Parameter(required = false, description = "Whether to retrieve all versions")
-                                          boolean allVersions)
+                                       @RestQuery("allVersions") @DefaultValue("false")
+                                       @Parameter(required = false, description = "Whether to retrieve all versions")
+                                       boolean allVersions)
     {
         addToDC("userIdCaller", identity.getAttribute(CheckinUser.ATTR_USERID));
         addToDC("userNameCaller", identity.getAttribute(CheckinUser.ATTR_FULLNAME));
@@ -136,7 +136,7 @@ public class TheGovernance extends BaseResource {
     @SecurityRequirement(name = "OIDC")
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({ Role.IMS_OWNER, Role.IMS_MANAGER })
-    @Operation(operationId = "updateConfiguration",  summary = "Update governance details")
+    @Operation(operationId = "updateGovernance",  summary = "Update governance details")
     @APIResponses(value = {
             @APIResponse(responseCode = "201", description = "Updated",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
@@ -148,7 +148,7 @@ public class TheGovernance extends BaseResource {
             @APIResponse(responseCode = "403", description="Permission denied"),
             @APIResponse(responseCode = "503", description="Try again later")
     })
-    public Uni<Response> updateConfiguration(@RestHeader(HttpHeaders.AUTHORIZATION) String auth, Governance governance)
+    public Uni<Response> updateGovernance(@RestHeader(HttpHeaders.AUTHORIZATION) String auth, Governance governance)
     {
         governance.changeBy = new User(
                 (String)identity.getAttribute(CheckinUser.ATTR_USERID),

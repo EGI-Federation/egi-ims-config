@@ -1,5 +1,7 @@
 package egi.eu;
 
+import egi.eu.entity.*;
+import egi.eu.model.Process;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -31,9 +33,6 @@ import jakarta.ws.rs.core.*;
 import egi.checkin.CheckinConfig;
 import egi.checkin.model.CheckinUser;
 import egi.eu.model.*;
-import egi.eu.entity.UserEntity;
-import egi.eu.entity.RoleEntity;
-import egi.eu.entity.RoleLogEntity;
 
 
 /***
@@ -107,6 +106,15 @@ public class Users extends BaseResource {
             var logs = logs_.stream().map(RoleLog::new).collect(Collectors.toList());
             populate(baseUri, from, limit, logs, false);
         }
+    }
+
+    /***
+     * Page of responsibilities
+     */
+    public static class PageOfResponsibilities extends Page<Responsibility, Long> {
+        public PageOfResponsibilities(String baseUri, long from, int limit, List<Responsibility> resps) {
+            // Always loads all (from database)
+            super(baseUri, from, limit, resps, true); }
     }
 
 
@@ -1161,6 +1169,145 @@ public class Users extends BaseResource {
             })
             .onFailure().recoverWithItem(e -> {
                 log.error("Failed to update role");
+                return new ActionError(e).toResponse();
+            });
+
+        return result;
+    }
+
+    /**
+     * List process responsibilities.
+     * @param auth The access token needed to call the service.
+     * @param allVersions True to return all versions of the responsibilities.
+     * @return API Response, wraps an ActionSuccess({@link PageOfResponsibilities}) or an ActionError entity
+     */
+    @GET
+    @Path("/role/responsibilities")
+    @SecurityRequirement(name = "OIDC")
+    @RolesAllowed(Role.IMS_USER)
+    @Operation(operationId = "getResponsibilities",  summary = "List process responsibilities")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = PageOfResponsibilities.class))),
+            @APIResponse(responseCode = "400", description="Invalid parameters or configuration",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ActionError.class))),
+            @APIResponse(responseCode = "401", description="Authorization required"),
+            @APIResponse(responseCode = "403", description="Permission denied"),
+            @APIResponse(responseCode = "503", description="Try again later")
+    })
+    public Uni<Response> getResponsibilities(@RestHeader(HttpHeaders.AUTHORIZATION) String auth,
+
+                                             @RestQuery("allVersions") @DefaultValue("false")
+                                             @Parameter(required = false, description = "Whether to retrieve all versions")
+                                             boolean allVersions)
+    {
+        addToDC("userIdCaller", identity.getAttribute(CheckinUser.ATTR_USERID));
+        addToDC("userNameCaller", identity.getAttribute(CheckinUser.ATTR_FULLNAME));
+        addToDC("allVersions", allVersions);
+
+        log.info("Getting responsibilities");
+
+        Uni<Response> result = Uni.createFrom().nullItem()
+
+            .chain(unused -> {
+                return allVersions ?
+                        sf.withSession(session -> ResponsibilityEntity.getAllVersions()) :
+                        sf.withSession(session -> ResponsibilityEntity.getLastVersionAsList());
+            })
+            .chain(versions -> {
+                // Got a list of responsibilities
+                if(!versions.isEmpty())
+                    log.info("Got responsibilities versions");
+
+                var resp = new Responsibility(versions);
+                return Uni.createFrom().item(Response.ok(resp).build());
+            })
+            .onFailure().recoverWithItem(e -> {
+                log.error("Failed to get responsibilities");
+                return new ActionError(e).toResponse();
+            });
+
+        return result;
+    }
+
+    /**
+     * Update process responsibilities.
+     * @param auth The access token needed to call the service.
+     * @return API Response, wraps an ActionSuccess or an ActionError entity
+     */
+    @PUT
+    @Path("/role/responsibilities")
+    @SecurityRequirement(name = "OIDC")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ Role.IMS_OWNER, Role.IMS_MANAGER })
+    @Operation(operationId = "updateResponsibilities",  summary = "Update process responsibilities")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "201", description = "Updated",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ActionSuccess.class))),
+            @APIResponse(responseCode = "400", description="Invalid parameters or configuration",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ActionError.class))),
+            @APIResponse(responseCode = "401", description="Authorization required"),
+            @APIResponse(responseCode = "403", description="Permission denied"),
+            @APIResponse(responseCode = "404", description="Not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ActionError.class))),
+            @APIResponse(responseCode = "503", description="Try again later")
+    })
+    public Uni<Response> updateResponsibilities(@RestHeader(HttpHeaders.AUTHORIZATION) String auth, Responsibility resp)
+    {
+        resp.changeBy = new User(
+                (String)identity.getAttribute(CheckinUser.ATTR_USERID),
+                (String)identity.getAttribute(CheckinUser.ATTR_FULLNAME),
+                (String)identity.getAttribute(CheckinUser.ATTR_EMAIL) );
+
+        addToDC("userIdCaller", resp.changeBy.checkinUserId);
+        addToDC("userNameCaller", resp.changeBy.fullName);
+        addToDC("role", resp);
+
+        log.info("Updating responsibilities");
+
+        var latest = new ArrayList<ResponsibilityEntity>();
+        Uni<Response> result = Uni.createFrom().nullItem()
+
+            .chain(unused -> {
+                return sf.withTransaction((session, tx) -> { return
+                    // Get the latest responsibilities version
+                    ResponsibilityEntity.getLastVersion()
+                        .chain(latestResp -> {
+                            // Got the latest version
+                            latest.add(latestResp);
+
+                            // Get users linked to this responsibility that already exist in the database
+                            var ids = new HashSet<String>();
+                            ids.add(resp.changeBy.checkinUserId);
+
+                            return UserEntity.findByCheckinUserIds(ids.stream().toList());
+                        })
+                        .chain(existingUsers -> {
+                            // Got the existing users
+                            var users = new HashMap<String, UserEntity>();
+                            for(var user : existingUsers)
+                                users.put(user.checkinUserId, user);
+
+                            // Create new responsibility version
+                            var latestResp = latest.get(0);
+                            var newResp = new ResponsibilityEntity(resp, latestResp, users);
+                            return session.persist(newResp);
+                        });
+                });
+            })
+            .chain(unused -> {
+                // Update complete, success
+                log.info("Updated process");
+                return Uni.createFrom().item(Response.ok(new ActionSuccess("Updated"))
+                        .status(Response.Status.CREATED).build());
+            })
+            .onFailure().recoverWithItem(e -> {
+                log.error("Failed to update process");
                 return new ActionError(e).toResponse();
             });
 

@@ -120,7 +120,6 @@ public class TheProcess extends BaseResource {
 
         log.info("Getting process info");
 
-        // If we need just the last version, get it now
         Uni<Response> result = Uni.createFrom().nullItem()
 
             .chain(unused -> {

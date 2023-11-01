@@ -1,6 +1,39 @@
 insert into ims.users (checkinuserid, fullname, email)
 values ('e9c37aa0d1cf14c56e560f9f9915da6761f54383badb501a2867bc43581b835c@egi.eu', 'Levente Farkas', 'levente.farkas@egi.eu');
 
+insert into ims.responsibility (changedon, changedescription, description)
+VALUES ('2023-10-19T21:05:22', 'First draft',
+'### Table of contents
+- [Goals](#goals)
+- [Roles, Responsibilities, and Communication](#roles-responsibilities-and-communication)
+    - [IMS-specific roles](#role-category-ims)
+    - [Process-specific role](#role-category-process)
+    - [Service-specific role](#role-category-service)
+
+### Goals
+This is a description of the roles and responsibilities within EGI Integrated Management System (IMS).
+
+### Roles, Responsibilities, and Communication
+The following image shows the EGI IMS role hierarchy (indicating the line of reporting).
+
+**Note**: In the case of communication between the IMS Manager and the Process Manager, the Process Owner should be always informed.
+
+<img src="/images/SMS-roles-hierarchy.png" alt="SMS roles hierarchy" style="width:70vw;"/>
+
+Communication should go through the following:
+
+- The mailing list [ims@mailman.egi.eu](mailto:ims@mailman.egi.eu), with the following membership:
+    - Service owners
+    - Process owners
+    - Process managers
+    - IMS manager
+    - IMS owner
+- Task queue EGI Jira IMS
+- Slack channel **#office-ims**');
+
+insert into ims.responsibility_editor_map (responsibility_id, user_id)
+values (1, 1);
+
 insert into ims.roles (role, name, version, status, changedon, changedescription, assignable, tasks)
 values ('process-staff', 'Process Staff', 1, 1, '2021-02-19T19:23:18', 'First version', false,
 'TBD'),
@@ -113,7 +146,7 @@ VALUES ('2023-10-19T19:23:18', 'First draft', 'EGI Foundation Governance',
 ### EGI.eu Statutes and Governance Bodies
 The EGI Foundation (a.k.a. EGI.eu) has adopted the legal form of a ‘Foundation’ under Dutch law. Its statutes were updated during 2015 and define the objectives of the foundation, the composition in terms of participants and associated participants, the organisation and tasks of the Council and Executive Board (EB), the role of the Director. For more information about benefits and options for joining the EGI Federation, please check the dedicated brochure [_Joining the EGI Federation_](https://go.egi.eu/join).
 
-<p style="text-align:center;"><img src="/images/EGI-Governing-Bodies.png" alt="EGI Governing Bodies" style="width:60vw;"/></p>
+<p style="text-align:center;"><img src="/images/EGI-governing-bodies.png" alt="EGI Governing Bodies" style="width:60vw;"/></p>
 
 #### Council
 The [Council](https://www.egi.eu/about/egi-council/) is the supervisory authority and monitors the general course of affairs in the Foundation. It consists of participants and associated participants of the foundation. Only participants have voting rights proportional to the paid fee, while associated participants cannot vote. The Council is also responsible for appointing the chairperson and the members of the Executive Board. The Terms of Reference (ToR) for the Council is defined by the EGI.eu Statutes and by a [dedicated ToR](https://documents.egi.eu/document/152).
