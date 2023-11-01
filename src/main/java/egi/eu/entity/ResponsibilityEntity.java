@@ -1,9 +1,9 @@
 package egi.eu.entity;
 
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
-import io.smallrye.common.constraint.NotNull;
 import io.smallrye.mutiny.Uni;
 import jakarta.persistence.*;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import egi.eu.model.Responsibility;
+import egi.eu.model.Responsibility.ResponsibilityStatus;
 
 
 /**
@@ -26,6 +27,16 @@ public class ResponsibilityEntity extends PanacheEntityBase {
 
     @Column(length = 10240)
     public String description;
+
+    public int reviewFrequency = 1;
+
+    @Schema(enumeration={ "day", "month", "year" })
+    @Column(length = 10)
+    public String frequencyUnit = "year";
+
+    public LocalDateTime nextReview;
+
+    public int status;
 
     // Change tracking
     @Column(nullable = false, unique = true, insertable = false, updatable = false, columnDefinition = "serial")
@@ -52,6 +63,22 @@ public class ResponsibilityEntity extends PanacheEntityBase {
 
 
     /***
+     * Copy constructor with new status
+     * @param resp The responsibilities to copy
+     * @param newStatus The new status
+     */
+    public ResponsibilityEntity(ResponsibilityEntity resp, ResponsibilityStatus newStatus) {
+        super();
+
+        // Copy simple fields
+        this.description = resp.description;
+        this.reviewFrequency = resp.reviewFrequency;
+        this.frequencyUnit = resp.frequencyUnit;
+        this.nextReview = resp.nextReview;
+        this.status = newStatus.getValue();
+    }
+
+    /***
      * Copy constructor
      * @param resp The new version (from the frontend)
      * @param latest The latest version in the database
@@ -70,6 +97,16 @@ public class ResponsibilityEntity extends PanacheEntityBase {
         }
 
         this.description = resp.description;
+        this.reviewFrequency = resp.reviewFrequency;
+        this.frequencyUnit = resp.frequencyUnit;
+        this.nextReview = resp.nextReview;
+
+        final var latestStatus = ResponsibilityStatus.of(latest.status);
+        if(ResponsibilityStatus.APPROVED == latestStatus)
+            // Changing an approved entity will require a new approval
+            this.status = ResponsibilityStatus.DRAFT.getValue();
+        else
+            this.status = latestStatus.getValue();
     }
 
     /***

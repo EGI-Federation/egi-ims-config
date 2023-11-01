@@ -1,7 +1,5 @@
 package egi.eu;
 
-import egi.eu.entity.*;
-import egi.eu.model.Process;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -32,7 +30,9 @@ import jakarta.ws.rs.core.*;
 
 import egi.checkin.CheckinConfig;
 import egi.checkin.model.CheckinUser;
+import egi.eu.entity.*;
 import egi.eu.model.*;
+import egi.eu.model.Process;
 
 
 /***
@@ -159,6 +159,7 @@ public class Users extends BaseResource {
     {
         addToDC("userIdCaller", identity.getAttribute(CheckinUser.ATTR_USERID));
         addToDC("userNameCaller", identity.getAttribute(CheckinUser.ATTR_FULLNAME));
+        addToDC("processName", imsConfig.group());
 
         log.info("Getting user info");
 
@@ -212,7 +213,7 @@ public class Users extends BaseResource {
     @Path("/users")
     @SecurityRequirement(name = "OIDC")
     @RolesAllowed({ Role.IMS_USER})
-    @Operation(operationId = "listUsers",  summary = "List IMS users")
+    @Operation(operationId = "listUsers",  summary = "List users")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
@@ -229,7 +230,7 @@ public class Users extends BaseResource {
                                    @Context HttpHeaders httpHeaders,
 
                                    @RestQuery("onlyProcess")
-                                   @Parameter(description = "Return only members of the SYS process")
+                                   @Parameter(description = "Return only members of the IMS process")
                                    @Schema(defaultValue = "false")
                                    boolean onlyProcess,
 
@@ -247,6 +248,7 @@ public class Users extends BaseResource {
 
         addToDC("userIdCaller", identity.getAttribute(CheckinUser.ATTR_USERID));
         addToDC("userNameCaller", identity.getAttribute(CheckinUser.ATTR_FULLNAME));
+        addToDC("processName", imsConfig.group());
         addToDC("onlyProcess", onlyProcess);
         addToDC("from", from);
         addToDC("limit", limit);
@@ -296,7 +298,7 @@ public class Users extends BaseResource {
     @SecurityRequirement(name = "OIDC")
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({ Role.IMS_OWNER, Role.IMS_MANAGER })
-    @Operation(operationId = "addUserToGroup",  summary = "Include user in the SYS process")
+    @Operation(operationId = "addUserToGroup",  summary = "Include user in the IMS process")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Included",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
@@ -329,6 +331,7 @@ public class Users extends BaseResource {
 
         addToDC("userIdCaller", grant.changeBy.checkinUserId);
         addToDC("userNameCaller", grant.changeBy.fullName);
+        addToDC("processName", imsConfig.group());
         addToDC("user", user);
 
         log.info("Adding user to group");
@@ -392,7 +395,7 @@ public class Users extends BaseResource {
     @SecurityRequirement(name = "OIDC")
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({ Role.IMS_OWNER, Role.IMS_MANAGER })
-    @Operation(operationId = "removeUserFromGroup",  summary = "Exclude user from the SYS process")
+    @Operation(operationId = "removeUserFromGroup",  summary = "Exclude user from the IMS process")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Excluded",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
@@ -425,6 +428,7 @@ public class Users extends BaseResource {
 
         addToDC("userIdCaller", grant.changeBy.checkinUserId);
         addToDC("userNameCaller", grant.changeBy.fullName);
+        addToDC("processName", imsConfig.group());
         addToDC("user", user);
 
         log.info("Removing user from group");
@@ -492,7 +496,7 @@ public class Users extends BaseResource {
     @Path("/users/roles")
     @SecurityRequirement(name = "OIDC")
     @RolesAllowed({ Role.IMS_USER })
-    @Operation(operationId = "listUsersWithRoles",  summary = "List users with roles in the SYS process")
+    @Operation(operationId = "listUsersWithRoles",  summary = "List users with roles in the IMS process")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
@@ -526,6 +530,7 @@ public class Users extends BaseResource {
 
         addToDC("userIdCaller", identity.getAttribute(CheckinUser.ATTR_USERID));
         addToDC("userNameCaller", identity.getAttribute(CheckinUser.ATTR_FULLNAME));
+        addToDC("processName", imsConfig.group());
         addToDC("roleNameFragment", roleNameFragment);
         addToDC("from", from);
         addToDC("limit", limit);
@@ -607,7 +612,7 @@ public class Users extends BaseResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({ Role.IMS_OWNER, Role.IMS_MANAGER })
     @Operation(operationId = "assignRoleToUser",  summary = "Assign a role to a user",
-               description ="To assign roles to a user, the user must be included in the SYS process.")
+               description ="To assign roles to a user, the user must be included in the IMS process.")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Assigned",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
@@ -637,6 +642,7 @@ public class Users extends BaseResource {
 
         addToDC("userIdCaller", grant.changeBy.checkinUserId);
         addToDC("userNameCaller", grant.changeBy.fullName);
+        addToDC("processName", imsConfig.group());
         addToDC("grant", grant);
 
         log.info("Assigning role to user");
@@ -749,6 +755,7 @@ public class Users extends BaseResource {
 
         addToDC("userIdCaller", grant.changeBy.checkinUserId);
         addToDC("userNameCaller", grant.changeBy.fullName);
+        addToDC("processName", imsConfig.group());
         addToDC("grant", grant);
 
         log.info("Revoking role from user");
@@ -832,7 +839,7 @@ public class Users extends BaseResource {
     @Path("/roles/assigned")
     @SecurityRequirement(name = "OIDC")
     @RolesAllowed({ Role.IMS_USER })
-    @Operation(operationId = "listAssignedRoles",  summary = "List assigned roles in the SYS process")
+    @Operation(operationId = "listAssignedRoles",  summary = "List assigned roles in the IMS process")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Success",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON,
@@ -866,6 +873,7 @@ public class Users extends BaseResource {
 
         addToDC("userIdCaller", identity.getAttribute(CheckinUser.ATTR_USERID));
         addToDC("userNameCaller", identity.getAttribute(CheckinUser.ATTR_FULLNAME));
+        addToDC("processName", imsConfig.group());
         addToDC("roleName", roleName);
         addToDC("from", from);
         addToDC("limit", limit);
@@ -937,6 +945,7 @@ public class Users extends BaseResource {
     {
         addToDC("userIdCaller", identity.getAttribute(CheckinUser.ATTR_USERID));
         addToDC("userNameCaller", identity.getAttribute(CheckinUser.ATTR_FULLNAME));
+        addToDC("processName", imsConfig.group());
         addToDC("roleName", role);
 
         log.info("Listing role definitions");
@@ -1030,6 +1039,7 @@ public class Users extends BaseResource {
 
         addToDC("userIdCaller", role.changeBy.checkinUserId);
         addToDC("userNameCaller", role.changeBy.fullName);
+        addToDC("processName", imsConfig.group());
         addToDC("role", role);
 
         log.info("Adding role");
@@ -1114,6 +1124,7 @@ public class Users extends BaseResource {
 
         addToDC("userIdCaller", role.changeBy.checkinUserId);
         addToDC("userNameCaller", role.changeBy.fullName);
+        addToDC("processName", imsConfig.group());
         addToDC("role", role);
 
         log.info("Updating role");
@@ -1176,145 +1187,6 @@ public class Users extends BaseResource {
     }
 
     /**
-     * List process responsibilities.
-     * @param auth The access token needed to call the service.
-     * @param allVersions True to return all versions of the responsibilities.
-     * @return API Response, wraps an ActionSuccess({@link PageOfResponsibilities}) or an ActionError entity
-     */
-    @GET
-    @Path("/role/responsibilities")
-    @SecurityRequirement(name = "OIDC")
-    @RolesAllowed(Role.IMS_USER)
-    @Operation(operationId = "getResponsibilities",  summary = "List process responsibilities")
-    @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Success",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = PageOfResponsibilities.class))),
-            @APIResponse(responseCode = "400", description="Invalid parameters or configuration",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ActionError.class))),
-            @APIResponse(responseCode = "401", description="Authorization required"),
-            @APIResponse(responseCode = "403", description="Permission denied"),
-            @APIResponse(responseCode = "503", description="Try again later")
-    })
-    public Uni<Response> getResponsibilities(@RestHeader(HttpHeaders.AUTHORIZATION) String auth,
-
-                                             @RestQuery("allVersions") @DefaultValue("false")
-                                             @Parameter(required = false, description = "Whether to retrieve all versions")
-                                             boolean allVersions)
-    {
-        addToDC("userIdCaller", identity.getAttribute(CheckinUser.ATTR_USERID));
-        addToDC("userNameCaller", identity.getAttribute(CheckinUser.ATTR_FULLNAME));
-        addToDC("allVersions", allVersions);
-
-        log.info("Getting responsibilities");
-
-        Uni<Response> result = Uni.createFrom().nullItem()
-
-            .chain(unused -> {
-                return allVersions ?
-                        sf.withSession(session -> ResponsibilityEntity.getAllVersions()) :
-                        sf.withSession(session -> ResponsibilityEntity.getLastVersionAsList());
-            })
-            .chain(versions -> {
-                // Got a list of responsibilities
-                if(!versions.isEmpty())
-                    log.info("Got responsibilities versions");
-
-                var resp = new Responsibility(versions);
-                return Uni.createFrom().item(Response.ok(resp).build());
-            })
-            .onFailure().recoverWithItem(e -> {
-                log.error("Failed to get responsibilities");
-                return new ActionError(e).toResponse();
-            });
-
-        return result;
-    }
-
-    /**
-     * Update process responsibilities.
-     * @param auth The access token needed to call the service.
-     * @return API Response, wraps an ActionSuccess or an ActionError entity
-     */
-    @PUT
-    @Path("/role/responsibilities")
-    @SecurityRequirement(name = "OIDC")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({ Role.IMS_OWNER, Role.IMS_MANAGER })
-    @Operation(operationId = "updateResponsibilities",  summary = "Update process responsibilities")
-    @APIResponses(value = {
-            @APIResponse(responseCode = "201", description = "Updated",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ActionSuccess.class))),
-            @APIResponse(responseCode = "400", description="Invalid parameters or configuration",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ActionError.class))),
-            @APIResponse(responseCode = "401", description="Authorization required"),
-            @APIResponse(responseCode = "403", description="Permission denied"),
-            @APIResponse(responseCode = "404", description="Not found",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ActionError.class))),
-            @APIResponse(responseCode = "503", description="Try again later")
-    })
-    public Uni<Response> updateResponsibilities(@RestHeader(HttpHeaders.AUTHORIZATION) String auth, Responsibility resp)
-    {
-        resp.changeBy = new User(
-                (String)identity.getAttribute(CheckinUser.ATTR_USERID),
-                (String)identity.getAttribute(CheckinUser.ATTR_FULLNAME),
-                (String)identity.getAttribute(CheckinUser.ATTR_EMAIL) );
-
-        addToDC("userIdCaller", resp.changeBy.checkinUserId);
-        addToDC("userNameCaller", resp.changeBy.fullName);
-        addToDC("role", resp);
-
-        log.info("Updating responsibilities");
-
-        var latest = new ArrayList<ResponsibilityEntity>();
-        Uni<Response> result = Uni.createFrom().nullItem()
-
-            .chain(unused -> {
-                return sf.withTransaction((session, tx) -> { return
-                    // Get the latest responsibilities version
-                    ResponsibilityEntity.getLastVersion()
-                        .chain(latestResp -> {
-                            // Got the latest version
-                            latest.add(latestResp);
-
-                            // Get users linked to this responsibility that already exist in the database
-                            var ids = new HashSet<String>();
-                            ids.add(resp.changeBy.checkinUserId);
-
-                            return UserEntity.findByCheckinUserIds(ids.stream().toList());
-                        })
-                        .chain(existingUsers -> {
-                            // Got the existing users
-                            var users = new HashMap<String, UserEntity>();
-                            for(var user : existingUsers)
-                                users.put(user.checkinUserId, user);
-
-                            // Create new responsibility version
-                            var latestResp = latest.get(0);
-                            var newResp = new ResponsibilityEntity(resp, latestResp, users);
-                            return session.persist(newResp);
-                        });
-                });
-            })
-            .chain(unused -> {
-                // Update complete, success
-                log.info("Updated process");
-                return Uni.createFrom().item(Response.ok(new ActionSuccess("Updated"))
-                        .status(Response.Status.CREATED).build());
-            })
-            .onFailure().recoverWithItem(e -> {
-                log.error("Failed to update process");
-                return new ActionError(e).toResponse();
-            });
-
-        return result;
-    }
-
-    /**
      * Mark role as implemented.
      * @param auth The access token needed to call the service.
      * @param role The role to implement.
@@ -1356,6 +1228,7 @@ public class Users extends BaseResource {
 
         addToDC("userIdCaller", changeBy.checkinUserId);
         addToDC("userNameCaller", changeBy.fullName);
+        addToDC("processName", imsConfig.group());
         addToDC("roleName", role);
         addToDC("change", change);
 
@@ -1462,6 +1335,7 @@ public class Users extends BaseResource {
 
         addToDC("userIdCaller", changeBy.checkinUserId);
         addToDC("userNameCaller", changeBy.fullName);
+        addToDC("processName", imsConfig.group());
         addToDC("roleName", role);
         addToDC("change", change);
 
@@ -1578,6 +1452,7 @@ public class Users extends BaseResource {
 
         addToDC("userIdCaller", identity.getAttribute(CheckinUser.ATTR_USERID));
         addToDC("userNameCaller", identity.getAttribute(CheckinUser.ATTR_FULLNAME));
+        addToDC("processName", imsConfig.group());
         addToDC("roleName", role);
         addToDC("from", from_);
         addToDC("limit", limit);

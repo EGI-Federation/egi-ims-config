@@ -3,7 +3,6 @@ package egi.eu.entity;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.hibernate.annotations.UpdateTimestamp;
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
-import io.quarkus.panache.common.Sort;
 import io.smallrye.mutiny.Uni;
 
 import jakarta.persistence.*;
@@ -137,7 +136,7 @@ public class ProcessEntity extends PanacheEntityBase {
 
         final var latestStatus = ProcessStatus.of(latest.status);
         if(ProcessStatus.APPROVED == latestStatus)
-            // Changing an approved process will require a new approval
+            // Changing an approved entity will require a new approval
             this.status = ProcessStatus.DRAFT.getValue();
         else
             this.status = latestStatus.getValue();

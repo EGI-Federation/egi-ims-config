@@ -34,8 +34,13 @@ public class RoleEntity extends PanacheEntityBase {
     @Column(length = 4096)
     public String tasks; // Markdown
 
-    public boolean assignable;
+    @Column(length = 1024)
+    public String recommendation; // Markdown
 
+    public boolean assignable;
+    public boolean handover;
+
+    public int category;
     public int status;
 
     // Change tracking
@@ -62,6 +67,7 @@ public class RoleEntity extends PanacheEntityBase {
         super();
 
         this.assignable = false;
+        this.handover = false;
     }
 
     /***
@@ -75,8 +81,11 @@ public class RoleEntity extends PanacheEntityBase {
         // Copy simple fields
         this.role = role.role;
         this.name = role.name;
+        this.recommendation = role.recommendation;
         this.tasks = role.tasks;
         this.assignable = role.assignable;
+        this.handover = role.handover;
+        this.category = role.category;
         this.status = newStatus.getValue();
 
         this.version = role.version + 1;
@@ -103,8 +112,11 @@ public class RoleEntity extends PanacheEntityBase {
 
         this.role = role.role;
         this.name = role.name;
+        this.recommendation = role.recommendation;
         this.tasks = role.tasks;
         this.assignable = role.assignable;
+        this.handover = role.handover;
+        this.category = role.category.getValue();
 
         if(null == latest)
             this.status = Role.RoleStatus.DRAFT.getValue();

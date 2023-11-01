@@ -50,6 +50,23 @@ public class Role extends VersionInfo {
         }
     }
 
+    public enum RoleCategory {
+        IMS(0),
+        PROCESS(1),
+        SERVICE(2);
+
+        private final int value;
+        private RoleCategory(int value) { this.value = value; }
+        public int getValue() { return value; }
+        public static RoleCategory of(int value) {
+            return switch(value) {
+                case 0 -> IMS;
+                case 2 -> SERVICE;
+                default -> PROCESS;
+            };
+        }
+    }
+
     @Schema(enumeration={ "Role" })
     public String kind = "Role";
 
@@ -62,6 +79,10 @@ public class Role extends VersionInfo {
     public String name; // Human-readable version of the role field
 
     public boolean assignable;
+    public boolean handover = false;
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    public String recommendation; // Markdown
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public String tasks; // Markdown
@@ -69,6 +90,9 @@ public class Role extends VersionInfo {
     @Schema(description="Users that hold this role")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public List<User> users;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public RoleCategory category = null;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public RoleStatus status = null;
@@ -106,8 +130,11 @@ public class Role extends VersionInfo {
         this.id = role.id;
         this.role = role.role;
         this.name = role.name;
+        this.recommendation = role.recommendation;
         this.tasks = role.tasks;
         this.assignable = role.assignable;
+        this.handover = role.handover;
+        this.category = RoleCategory.of(role.category);
         this.status = RoleStatus.of(role.status);
 
         this.version = role.version;

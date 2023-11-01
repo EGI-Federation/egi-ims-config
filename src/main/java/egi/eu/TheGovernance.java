@@ -157,6 +157,7 @@ public class TheGovernance extends BaseResource {
 
         addToDC("userIdCaller", governance.changeBy.checkinUserId);
         addToDC("userNameCaller", governance.changeBy.fullName);
+        addToDC("processName", imsConfig.group());
         addToDC("governance", governance);
 
         log.info("Updating governance");
