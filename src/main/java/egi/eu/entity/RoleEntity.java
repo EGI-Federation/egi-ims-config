@@ -1,6 +1,7 @@
 package egi.eu.entity;
 
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.reactive.mutiny.Mutiny;
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import io.smallrye.common.constraint.NotNull;
 import io.smallrye.mutiny.Uni;
@@ -10,6 +11,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import egi.eu.model.Role;
+import egi.eu.model.Role.RoleStatus;
+import egi.eu.model.Role.RoleCategory;
 
 
 /**
@@ -67,6 +70,7 @@ public class RoleEntity extends PanacheEntityBase {
         super();
 
         this.assignable = false;
+        this.category = RoleCategory.PROCESS.getValue();
         this.handover = false;
     }
 
@@ -75,7 +79,7 @@ public class RoleEntity extends PanacheEntityBase {
      * @param role The role to copy
      * @param newStatus The new status
      */
-    public RoleEntity(RoleEntity role, Role.RoleStatus newStatus) {
+    public RoleEntity(RoleEntity role, RoleStatus newStatus) {
         super();
 
         // Copy simple fields
@@ -116,15 +120,15 @@ public class RoleEntity extends PanacheEntityBase {
         this.tasks = role.tasks;
         this.assignable = role.assignable;
         this.handover = role.handover;
-        this.category = role.category.getValue();
+        this.category = (null != role.category) ? role.category.getValue() : RoleCategory.PROCESS.getValue();
 
         if(null == latest)
-            this.status = Role.RoleStatus.DRAFT.getValue();
+            this.status = RoleStatus.DRAFT.getValue();
         else {
-            final var latestStatus = Role.RoleStatus.of(latest.status);
-            if (Role.RoleStatus.IMPLEMENTED == latestStatus)
+            final var latestStatus = RoleStatus.of(latest.status);
+            if(RoleStatus.IMPLEMENTED == latestStatus)
                 // Changing an implemented role will require a new implementation
-                this.status = Role.RoleStatus.DRAFT.getValue();
+                this.status = RoleStatus.DRAFT.getValue();
             else
                 this.status = latestStatus.getValue();
         }
@@ -169,6 +173,24 @@ public class RoleEntity extends PanacheEntityBase {
             var versions = map.computeIfAbsent(role.role, k -> new ArrayList<RoleEntity>());
 
             versions.add(role);
+        }
+
+        for(var entry : map.entrySet()) {
+            var versions = entry.getValue();
+            if(versions.size() > 1) {
+                versions.sort(new Comparator<RoleEntity>() {
+                    @Override
+                    public int compare(RoleEntity lhs, RoleEntity rhs) {
+                        // -1 means lhs < rhs, 1 means lhs > rhs, 0 means equal for ascending sort
+                        if(lhs.version < rhs.version)
+                            return 1;
+                        else if(lhs.version > rhs.version)
+                            return -1;
+
+                        return 0;
+                    }
+                });
+            }
         }
 
         return map;

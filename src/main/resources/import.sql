@@ -5,20 +5,19 @@ insert into ims.responsibility (status, reviewfrequency, frequencyunit, nextrevi
 VALUES (0, 1, 'year', '2024-05-14', '2023-10-19T21:05:22', 'First draft',
 '### Table of contents
 - [Goals](#goals)
-- [Roles, Responsibilities, and Communication](#roles-responsibilities-and-communication)
-    - [IMS-specific roles](#role-category-ims)
-    - [Process-specific role](#role-category-process)
-    - [Service-specific role](#role-category-service)
+- [Roles, responsibilities, and communication](#roles-responsibilities-and-communication)
+    - [IMS-specific roles and assignment](#role-category-ims)
+    - [Process-specific roles and assignment](#role-category-process)
+    - [Service-specific roles and assignment](#role-category-service)
 
 ### Goals
 This is a description of the roles and responsibilities within EGI Integrated Management System (IMS).
 
-### Roles, Responsibilities, and Communication
-The following image shows the EGI IMS role hierarchy (indicating the line of reporting).
-
+### Roles, responsibilities, and communication
+The following image shows the EGI IMS role hierarchy (indicating the line of reporting).<br/>
 **Note**: In the case of communication between the IMS Manager and the Process Manager, the Process Owner should be always informed.
 
-<img src="/images/SMS-roles-hierarchy.png" alt="SMS roles hierarchy" style="width:70vw;"/>
+<p style="text-align:center;"><img src="/images/SMS-roles-hierarchy.png" alt="SMS roles hierarchy" style="width:40vw;"/></p>
 
 Communication should go through the following:
 
@@ -29,7 +28,7 @@ Communication should go through the following:
     - IMS manager
     - IMS owner
 - Task queue EGI Jira IMS
-- Slack channel **#office-ims**');
+- Slack channel [#office-ims](https://egiteam.slack.com/messages/office-ims/)');
 
 insert into ims.responsibility_editor_map (responsibility_id, user_id)
 values (1, 1);
@@ -37,7 +36,7 @@ values (1, 1);
 insert into ims.roles (role, name, version, status, category, changedon, changedescription, assignable, handover, recommendation, tasks)
 values ('process-staff', 'Process Staff', 1, 1, 1, '2021-02-19T19:23:18', 'First version', false, false, '1 or more per process',
 '- Carry out defined activities according to the process and, as applicable, its procedures
-- Report to the process manager'),
+- Report to the case owner and/or process manager'),
 
        ('process-owner', 'Process Owner', 1, 1, 1, '2021-02-19T19:23:18', 'First version', false, true, '1 per process',
 'Act as the primary contact point for concerns in the context of governing one specific IMS process.

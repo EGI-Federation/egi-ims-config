@@ -158,7 +158,7 @@ public class TheResponsibilities extends BaseResource {
     @Path("/responsibilities")
     @SecurityRequirement(name = "OIDC")
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({ Role.PROCESS_OWNER, Role.PROCESS_MANAGER })
+    @RolesAllowed({ Role.IMS_OWNER, Role.IMS_MANAGER })
     @Operation(operationId = "updateResponsibility", summary = "Update process responsibilities")
     @APIResponses(value = {
             @APIResponse(responseCode = "201", description = "Updated",
