@@ -13,8 +13,8 @@ and this project adheres to
 - Takes caller's identity for _changeBy_ instead of relying on API parameter
 - Added logging of role assignments
 - Added endpoint to list role assignments
-- Updated permission for user/role endpoints
-- Change process code from SYS to IMS 
+- Updated permissions for user/role endpoints
+- Changed process code from SYS to IMS
 
 ## 1.0.4
 - User and role management complete
