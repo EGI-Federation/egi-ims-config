@@ -116,7 +116,8 @@ public class SysMockCheckinProxy implements QuarkusTestResourceLifecycleManager 
      */
     @Override
     public void inject(TestInjector testInjector) {
-        testInjector.injectIntoFields(mockCheckin, new TestInjector.AnnotatedAndMatchesType(InjectSysMockCheckin.class, SysMockCheckin.class));
+        testInjector.injectIntoFields(mockCheckin,
+                new TestInjector.AnnotatedAndMatchesType(InjectSysMockCheckin.class, SysMockCheckin.class));
     }
 
     /**

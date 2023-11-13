@@ -130,7 +130,7 @@ public class SysRoleParsingTest {
     }
 
     @Test
-    @DisplayName("SYS roles require explicit IMS group membership")
+    @DisplayName("IMS roles require explicit IMS group membership")
     public void testNoGroupMembership() {
         // Setup entitlements
         userInfo.addEntitlement(prefix + "role=member" + postfix);
