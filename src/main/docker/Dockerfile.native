@@ -7,11 +7,11 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.native -t egi/ims-ims-api .
+# docker build -f src/main/docker/Dockerfile.native -t egi/ims-api .
 #
 # Then run the container using:
 #
-# docker run -i --rm -p 9081:8081 egi/ims-ims-api
+# docker run -i --rm -p 9081:8081 egi/ims-api
 #
 ###
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.6
