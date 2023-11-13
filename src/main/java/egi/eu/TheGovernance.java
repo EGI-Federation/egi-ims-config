@@ -68,7 +68,7 @@ public class TheGovernance extends BaseResource {
      * Get governance configuration.
      * @param auth The access token needed to call the service.
      * @param allVersions True to return all versions of the process.
-     * @return API Response, wraps an ActionSuccess({@link Governance}) or an ActionError entity
+     * @return API Response, wraps a {@link Governance} or an ActionError entity
      */
     @GET
     @Path("/governance")
