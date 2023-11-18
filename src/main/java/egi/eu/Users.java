@@ -18,6 +18,8 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.quarkus.security.identity.SecurityIdentity;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.function.Predicate;
@@ -1378,9 +1380,9 @@ public class Users extends BaseResource {
 
     /**
      * List assignment logs for a role.
-     * @param auth The access token needed to call the service.
-     * @param role The to return assignment logs for.
-     * @param from_ The first element to return
+     * @param auth The access token needed to call the service
+     * @param role The to return assignment logs for
+     * @param from_ The date and time from which to return elements
      * @param limit_ The maximum number of elements to return
      * @return API Response, wraps a {@link PageOfRoleLogs} or an ActionError entity
      */
@@ -1415,7 +1417,8 @@ public class Users extends BaseResource {
                                       String role,
 
                                       @RestQuery("from")
-                                      @Parameter(description = "Only return logs before this date and time")
+                                      @Parameter(description = "Only return logs before this UTC date and time.\n" +
+                                                               "Do not include time zone in this parameter.")
                                       @Schema(format = "yyyy-mm-ddThh:mm:ss.SSSSSS", defaultValue = "now")
                                       String from_,
 
@@ -1446,7 +1449,11 @@ public class Users extends BaseResource {
             if((null == from_ || from_.isBlank() || from_.equalsIgnoreCase("now")))
                 from = LocalDateTime.now();
             else
-                from = LocalDateTime.parse(from_);
+                // Convert from UTC to the local timezone
+                from = LocalDateTime.parse(from_)
+                                    .atZone(ZoneOffset.UTC)
+                                    .withZoneSameInstant(ZoneId.systemDefault())
+                                    .toLocalDateTime();
         }
         catch(DateTimeParseException e) {
             var ae = new ActionError("badRequest", "Invalid parameter from");

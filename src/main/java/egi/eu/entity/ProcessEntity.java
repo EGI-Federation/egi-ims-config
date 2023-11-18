@@ -8,6 +8,8 @@ import io.smallrye.mutiny.Uni;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -92,10 +94,10 @@ public class ProcessEntity extends PanacheEntityBase {
         // Copy simple fields
         this.description = process.description;
         this.contact = process.contact;
+        this.status = newStatus.getValue();
         this.reviewFrequency = process.reviewFrequency;
         this.frequencyUnit = process.frequencyUnit;
         this.nextReview = process.nextReview;
-        this.status = newStatus.getValue();
 
         // Copy requirements
         if(null != process.requirements) {
@@ -132,7 +134,11 @@ public class ProcessEntity extends PanacheEntityBase {
         this.contact = process.contact;
         this.reviewFrequency = process.reviewFrequency;
         this.frequencyUnit = process.frequencyUnit;
-        this.nextReview = process.nextReview;
+        this.nextReview = (null == process.nextReview) ? null :
+                process.nextReview
+                       .atZone(ZoneOffset.UTC)
+                       .withZoneSameInstant(ZoneId.systemDefault())
+                       .toLocalDateTime();
 
         final var latestStatus = ProcessStatus.of(latest.status);
         if(ProcessStatus.APPROVED == latestStatus)

@@ -1,5 +1,6 @@
 package egi.eu.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import egi.checkin.model.CheckinUser;
 import jakarta.persistence.Column;
@@ -64,17 +65,13 @@ public class Procedure extends VersionInfo {
     @Schema(enumeration={ "sec", "min", "hour", "day", "month", "year" })
     public String frequencyUnit;
 
+    @Schema(description="Date and time of the next review. Always returned as UTC date and time.")
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    public LocalDateTime nextReview;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS", timezone = "UTC")
+    public LocalDateTime nextReview; // UTC
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public CheckinUser owner;
-
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    public CheckinUser approver;
-
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    public LocalDateTime approvedOn;
 
     public ProcedureStatus status;
 

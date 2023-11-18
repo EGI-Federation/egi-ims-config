@@ -72,10 +72,10 @@ public class ResponsibilityEntity extends PanacheEntityBase {
 
         // Copy simple fields
         this.description = resp.description;
+        this.status = newStatus.getValue();
         this.reviewFrequency = resp.reviewFrequency;
         this.frequencyUnit = resp.frequencyUnit;
         this.nextReview = resp.nextReview;
-        this.status = newStatus.getValue();
     }
 
     /***
