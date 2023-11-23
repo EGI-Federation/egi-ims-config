@@ -88,11 +88,11 @@ public class TheGovernance extends BaseResource {
             @APIResponse(responseCode = "403", description="Permission denied"),
             @APIResponse(responseCode = "503", description="Try again later")
     })
-    public Uni<Response> getGovernance(@RestHeader(HttpHeaders.AUTHORIZATION) String auth,
+    public Uni<Response> get(@RestHeader(HttpHeaders.AUTHORIZATION) String auth,
 
-                                       @RestQuery("allVersions") @DefaultValue("false")
-                                       @Parameter(required = false, description = "Whether to retrieve all versions")
-                                       boolean allVersions)
+                             @RestQuery("allVersions") @DefaultValue("false")
+                             @Parameter(required = false, description = "Whether to retrieve all versions")
+                             boolean allVersions)
     {
         addToDC("userIdCaller", identity.getAttribute(CheckinUser.ATTR_USERID));
         addToDC("userNameCaller", identity.getAttribute(CheckinUser.ATTR_FULLNAME));
@@ -148,7 +148,7 @@ public class TheGovernance extends BaseResource {
             @APIResponse(responseCode = "403", description="Permission denied"),
             @APIResponse(responseCode = "503", description="Try again later")
     })
-    public Uni<Response> updateGovernance(@RestHeader(HttpHeaders.AUTHORIZATION) String auth, Governance governance)
+    public Uni<Response> update(@RestHeader(HttpHeaders.AUTHORIZATION) String auth, Governance governance)
     {
         governance.changeBy = new User(
                 (String)identity.getAttribute(CheckinUser.ATTR_USERID),
