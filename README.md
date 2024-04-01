@@ -11,7 +11,7 @@ service, which provides tools to automate and simplify the IMS processes. This c
 configuration of the [Management System](https://confluence.egi.eu/display/IMS/Management+System).
 
 This project uses [Quarkus](https://quarkus.io), the Supersonic Subatomic Java Framework.
-It requires [Java 17](https://openjdk.org/projects/jdk/17/).
+It requires [Java 17](https://openjdk.org/projects/jdk/17/) and Quarkus [tooling](https://quarkus.io/guides/cli-tooling).
 
 ## Authentication and authorization
 
